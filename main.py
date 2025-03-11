@@ -1,3 +1,24 @@
+import math
+
+
+# This code indends to make a tip calculator which takes a total dollar amount
+# and modifies calculates a percentage total based on the user's input.
+ 
+testTotal:float = 11.95
+testTip:int = 20
+ 
+def calculateTip(total:float, percentTip:int) -> float:
+    tip = percentTip/100
+    finalPayment = (tip+1)*total
+    print(f"Your chosen tip amount: {percentTip}%")
+    roundedTotal:float = round(finalPayment, 2)
+    print(f"Your final payment: ${roundedTotal}")
+ 
+calculateTip(testTotal, testTip)
+
+
+
+
 name = input("Please enter your name: ")
 print(f"Welcome to the Online Ordering System {name}!")
 
