@@ -15,17 +15,25 @@ class MenuItem:
 # Formatting: number, item, price.
 menu_items = (MenuItem ( "Pizza", 15.99, ) ),( MenuItem( "Burger", 6.00 ) ), ( MenuItem( "Salad", 15.99 ) ), ( MenuItem( "Pasta", 7.00 ) ), ( MenuItem( "Soda", 2.00 ) )
 
-# This code indends to make a tip calculator which takes a total dollar amount
+# This code intends to make a tip calculator which takes a total dollar amount
 # and modifies calculates a percentage total based on the user's input.
-def calculateTip( total: float, percentTip: int ) -> float:
-    # get a tip value based on the percentage provided
-    tip = percentTip / 100
-    # Calculate the final payment based on the tip
-    finalPayment = ( tip+1 ) * total
-
-    print(f"Your chosen tip amount: {percentTip}%")
-    roundedTotal:float = round(finalPayment, 2)
-    print(f"Your final payment: ${roundedTotal}")
+def calculateTip(total:float, tip:float) -> float:
+    #testTotal:float = 11.95 
+    userInput = input(f"Would you like to add a tip? Type 1 for yes, any other integer for no: ")
+    value = int(userInput)
+    
+    if(value != 1):
+        print("You have chosen to not tip.")
+        theTip = 0
+    else:
+        userInput2 = input("How much would you like to tip?(%): ")
+        theTip = int(userInput2)
+        tip = theTip/100
+        finalPayment:float = (tip+1)*total
+        roundedTotal:float = round(finalPayment, 2)  
+        print(f"Your chosen tip amount: {theTip}%")  
+        print(f"Your final payment with your chosen tip: ${roundedTotal}")    
+        return roundedTotal
 
 # Function to determine the discount percentage applied to items based on discount codes. 
 # return float between 0-1
@@ -33,9 +41,21 @@ def getDiscountPerc( discountCode: str ) -> float:
     # TODO: look through a list of discount codes to determine the percentage
     return 0.0
 
+#Function to track purchases; calls after a purchase is made 
+def TrackPurchases(currentCart, purchaseList): # parameters are the current cart and a list of all purchased items, respectively
+    for item in currentCart: # Adds all items in the current card into a list of purchases
+        purchaseList.append(item)
+   
+    print("Food bought:") # Prints the tracked purchases
+    print("-" * 30)
+    for item in purchaseList:
+        print(f"{item[1]}")
+   
+    currentCart.clear() # Clears the current cart 
+        
 #order summary
 def OrderSummary():
-    global blanace 
+    global balance 
 
     if not user_cart:
         print(f'Your cart is empty. Add Items before checkout')
