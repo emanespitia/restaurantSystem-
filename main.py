@@ -33,9 +33,21 @@ def getDiscountPerc( discountCode: str ) -> float:
     # TODO: look through a list of discount codes to determine the percentage
     return 0.0
 
+#Function to track purchases; calls after a purchase is made 
+def TrackPurchases(currentCart, purchaseList): # parameters are the current cart and a list of all purchased items, respectively
+    for item in currentCart: # Adds all items in the current card into a list of purchases
+        purchaseList.append(item)
+   
+    print("Food bought:") # Prints the tracked purchases
+    print("-" * 30)
+    for item in purchaseList:
+        print(f"{item[1]}")
+   
+    currentCart.clear() # Clears the current cart 
+        
 #order summary
 def OrderSummary():
-    global blanace 
+    global balance 
 
     if not user_cart:
         print(f'Your cart is empty. Add Items before checkout')
