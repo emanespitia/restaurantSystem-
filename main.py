@@ -13,7 +13,7 @@ class MenuItem:
         pass
 
 # Formatting: number, item, price.
-menu_items = (MenuItem( "Pizza", 15.99 ) ), ( MenuItem( "Burger", 6.00 ) ), ( MenuItem( "Salad", 15.99 ) ), ( MenuItem( "Pasta", 7.00 ) ), ( MenuItem( "Soda", 2.00 ) )
+menu_items = (MenuItem ( "Pizza", 15.99, ) ),( MenuItem( "Burger", 6.00 ) ), ( MenuItem( "Salad", 15.99 ) ), ( MenuItem( "Pasta", 7.00 ) ), ( MenuItem( "Soda", 2.00 ) )
 
 # This code indends to make a tip calculator which takes a total dollar amount
 # and modifies calculates a percentage total based on the user's input.
@@ -32,6 +32,59 @@ def calculateTip( total: float, percentTip: int ) -> float:
 def getDiscountPerc( discountCode: str ) -> float:
     # TODO: look through a list of discount codes to determine the percentage
     return 0.0
+
+#order summary
+def OrderSummary():
+    global blanace 
+
+    if not user_cart:
+        print(f'Your cart is empty. Add Items before checkout')
+        return
+
+    print('\n' + '-'*30)
+    print("ORDER SUMMARY".center(35))
+    print('\n' + '-'*30)
+
+    discount_percentage = 0
+    has_discountCode = input(f'Do you have a discount code (yes/no)? ')
+
+    if has_discountCode == 'YES' or 'yes ':
+        while True:
+            user_discount = input ("Entyer your discount code: ")
+
+            discount_percentage = getDiscountPerc(user_discount)
+
+            if discount_percentage > 0:
+                print (f' Disocunt is applied {user_discount} - {discount_percentage}% off')
+            else:
+                print(f'Invalid Code')
+    else:
+        print(f'No discount being used')
+
+    total_price = 0
+    for item in user_cart:
+        # Apply the discount to each item
+        item.discount_perc = discount_percentage
+        discounted_price = item.price * (1 - item.discount_perc / 100)
+        total_spent += discounted_price
+        print(f"{item.food:<10} ${discounted_price:.2f}")
+
+    print("-" * 30)
+    print(f"Subtotal after discount: ${total_spent:.2f}")
+
+    # Ask for tip amount
+    tip_percent = int(input("Enter tip percentage (0-20%): "))
+    final_price = calculateTip(total_spent, tip_percent)
+
+    # **Deduct the final price from balance**
+    balance -= final_price
+    print(f'Remaining Balance {balance}')
+
+    print("Payment is successful!")
+
+
+
+   
 
 # Entry function
 if __name__ == "__main__":
@@ -78,6 +131,8 @@ if __name__ == "__main__":
         print( menu_options[-1] )
 
         success = True
+
+
 
 
     
