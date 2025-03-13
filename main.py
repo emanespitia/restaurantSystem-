@@ -52,7 +52,29 @@ def TrackPurchases(currentCart, purchaseList): # parameters are the current cart
         print(f"{item[1]}")
    
     currentCart.clear() # Clears the current cart 
+    
+# changes may need to be made to this function based  on implementation of allergies
+def addItemToOrder(menu_selection, menu, user_allergens, current_cart, current_cart_balance):
+    # checks if the selection is valid
+    if menu_selection < 0 or menu_selection >= len(menu):
+        raise ValueError("Invalid menu selection. Please select a valid menu item,")
+
+    # gets attributes for selected menu item
+    item_num, item_name, item_price, item_allergen = menu[menu_selection]
+    
+    # checks allergens
+    if any(a in user_allergens for a in item_allergens):
+        user_confirmation = input(f"Warning: {item_name} contains {', '.join(item_allergens)} which you have listed as an allergy for your account. Do you still want to order it? (YES/NO): ")
+        if user_confirmation.lower() != "YES":
+            print("Item not added to the order.")
+            # return with no changes to cart if not YES to continue
+            return current_cart, current_cart_balance
         
+    # make changes to cart and return
+    current_cart.append(menu_selection) # adds integer corresponging to menu item 
+    current_cart_balance += item_price
+    return current_cart, current_cart_balance
+
 #order summary
 def OrderSummary():
     global balance 
