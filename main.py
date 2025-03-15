@@ -60,8 +60,24 @@ def calculateTip(total : float, tip : float) -> float:
 # Function to determine the discount percentage applied to items based on discount codes. 
 # return integer between 0-99
 def getDiscountPerc( discountCode: str ) -> int:
-    # TODO: look through a list of discount codes to determine the percentage
-    return 0
+    DiscountCodes = {
+    "SAVE10":.9,
+    "SAVE15":.85,
+    "SORRY20": .8,
+    "MILITARY30":.7 }
+    UserInput = input("Do you have a coupon code? Y/N ")
+    if UserInput == 'N' or UserInput == 'n':
+        return 1
+    else:
+        UserInput = input("Enter your code: ")
+        if UserInput in DiscountCodes:
+            print("Code Applied!")
+            return DiscountCodes[UserInput]
+        else:
+            print("Code not found")
+            return 1
+    
+    
 
 #Function to track purchases; calls after a purchase is made 
 def TrackPurchases(currentCart, purchaseList): # parameters are the current cart and a list of all purchased items, respectively
