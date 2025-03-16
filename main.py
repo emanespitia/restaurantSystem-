@@ -156,6 +156,7 @@ def OrderSummary():
 
     # **Deduct the final price from balance**
     balance -= final_price
+    balance = round(balance,2)
     print(f'Remaining Balance {balance}')
     print("Payment is successful!")
     print(f"Total Calories: {cal_count}")
