@@ -3,11 +3,12 @@ import math
 # Struct of a food item
 class MenuItem:
     # 
-    def __init__(self, food : str, price : float, discount_perc : float = 0, allergens : list = [] ):
+    def __init__(self, food : str, price : float, discount_perc : float = 0, allergens : list = [], calories: int = 0):
         self.food = food
         self.price = price
         self.discount_perc = discount_perc
         self.allergens = allergens
+        self.calories = calories
         pass
 
     # Function to get the price of the item, with discount applied if applicable
@@ -31,14 +32,15 @@ item_allergens = ["milk", "eggs", "nuts", "fish", "wheat", "soy", "sesame", "she
 
 # Formatting: number, item, price.
 menu_items = (
-( MenuItem ( "Pizza", 15.99, 0, ["wheat", "milk"] ) ),
-( MenuItem( "Burger", 6.00, 0, ["wheat", "sesame"] ) ), 
-( MenuItem( "Salad", 15.99, 0, [] ) ), 
-( MenuItem( "Pasta", 7.00, 0, ["milk", "wheat"] ) ), 
-( MenuItem( "Soda", 2.00, 0, [] ) ), 
+( MenuItem ( "Pizza", 15.99, 0, ["wheat", "milk"],300 ) ),
+( MenuItem( "Burger", 6.00, 0, ["wheat", "sesame"],450 ) ), 
+( MenuItem( "Salad", 15.99, 0, [],450 ) ), 
+( MenuItem( "Pasta", 7.00, 0, ["milk", "wheat"],400 ) ), 
+( MenuItem( "Soda", 2.00, 0, [],160 ) ), 
 ( "Checkout" )
 )
 
+cal_count = 0
 # User's name
 name : str = "" 
 # User's balance, formatted by 2 precision points
@@ -59,7 +61,7 @@ def calculateTip(total : float, tip : float) -> float:
 
 # Function to determine the discount percentage applied to items based on discount codes. 
 # return integer between 0-99
-def getDiscountPerc( discountCode: str ) -> int:
+def getDiscountPerc():
     DiscountCodes = {
     "SAVE10":.9,
     "SAVE15":.85,
@@ -115,24 +117,7 @@ def OrderSummary():
         print(f'Your cart is empty. Add items before checking out.')
         return
 
-    discount_percentage = 0
-    has_discountCode = input(f'Do you have a discount code (Y/N)? ')
-    if has_discountCode[0].lower() == 'y':
-        while True:
-            user_discount = input ("Enter your discount code (Write \"N\" if you don't have one): ")
-            discount_percentage = getDiscountPerc(user_discount)
-            if discount_percentage > 0:
-                # Convert into an integer
-                print(f' Discount is applied {user_discount} - {discount_percentage * 100}% off')
-                break
-            elif user_discount[0].lower() == "n":
-                print( "User didn't have a discount code. Continuing.")
-                break
-            else:
-                print(f'Invalid Code')
-    else:
-        print(f'No discount being used.')
-
+    
     print('\n' + '-' * 30)
     print("ORDER SUMMARY".center(35))
     for item in user_cart:
@@ -144,9 +129,10 @@ def OrderSummary():
     item : MenuItem
     for item in user_cart:
         # Apply the discount to each item
-        item.discount_perc = discount_percentage
+        global cal_count
         # Get the price from the item, it could be different due to a discount.
         total_spent += item.getPrice()
+        cal_count += item.calories
         print(f"{item.food:<10} ${item.getPrice():.2f}")
 
     print("-" * 30)
@@ -164,6 +150,7 @@ def OrderSummary():
     # Convert to float
     tip_percent /= 100
 
+    total_spent *= getDiscountPerc()
     # Calculate the tip
     final_price = calculateTip(total_spent, tip_percent)
 
@@ -171,6 +158,7 @@ def OrderSummary():
     balance -= final_price
     print(f'Remaining Balance {balance}')
     print("Payment is successful!")
+    print(f"Total Calories: {cal_count}")
 
 # Function to display the menu with a prompt for a suggestion
 # question: What question will be displayed from this
@@ -262,3 +250,4 @@ if __name__ == "__main__":
             if addItemToOrder( selection, user_allergy_list ):
                 print( f"You have selected: {selection.food} Adding to cart." )
     
+
