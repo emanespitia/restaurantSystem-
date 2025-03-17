@@ -86,16 +86,12 @@ def getDiscountPerc():
 
 #Function to track purchases; calls after a purchase is made 
 def TrackPurchases(currentCart): # parameters are the current cart and a list of all purchased items, respectively
-    for item in currentCart: # Adds all items in the current card into a list of purchases
-        global purchase_history
-        for item in currentCart:
-            purchase_history.append(item)
-   
-    print("Food bought:") # Prints the tracked purchases
-    print("-" * 30)
-    for item in purchase_history:
-        print(f"{item.food}")
-   
+   global purchase_history
+   purchase_history.extend(currentCart)
+   print("Food bought:") # Prints the tracked purchases
+   print("-" * 30)
+   for item in purchase_history:
+       print(f"{item.food}")
     
 # changes may need to be made to this function based on implementation of allergies
 def addItemToOrder( menu_selection : MenuItem, user_allergens : list ) -> bool:
