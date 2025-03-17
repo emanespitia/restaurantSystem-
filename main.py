@@ -37,7 +37,8 @@ menu_items = (
 ( MenuItem( "Salad", 15.99, 0, [],450 ) ), 
 ( MenuItem( "Pasta", 7.00, 0, ["milk", "wheat"],400 ) ), 
 ( MenuItem( "Soda", 2.00, 0, [],160 ) ), 
-( "Checkout" )
+("Checkout") ,
+("Exit") 
 )
 
 cal_count = 0
@@ -45,6 +46,8 @@ cal_count = 0
 name : str = "" 
 # User's balance, formatted by 2 precision points
 balance : float = 0.00
+# Track all purchases
+purchase_history = []
 
 # This code intends to make a tip calculator which takes a total dollar amount
 # and modifies calculates a percentage total based on the user's input.
@@ -82,16 +85,17 @@ def getDiscountPerc():
     
 
 #Function to track purchases; calls after a purchase is made 
-def TrackPurchases(currentCart, purchaseList): # parameters are the current cart and a list of all purchased items, respectively
+def TrackPurchases(currentCart): # parameters are the current cart and a list of all purchased items, respectively
     for item in currentCart: # Adds all items in the current card into a list of purchases
-        purchaseList.append(item)
+        global purchase_history
+        for item in currentCart:
+            purchase_history.append(item)
    
     print("Food bought:") # Prints the tracked purchases
     print("-" * 30)
-    for item in purchaseList:
-        print(f"{item[1]}")
+    for item in purchase_history:
+        print(f"{item.food}")
    
-    currentCart.clear() # Clears the current cart 
     
 # changes may need to be made to this function based on implementation of allergies
 def addItemToOrder( menu_selection : MenuItem, user_allergens : list ) -> bool:
@@ -111,6 +115,8 @@ def addItemToOrder( menu_selection : MenuItem, user_allergens : list ) -> bool:
 # order summary
 def OrderSummary():
     global balance
+    global cal_count
+    global user_cart
     
     # Check if the cart is empty
     if not user_cart:
@@ -126,10 +132,10 @@ def OrderSummary():
 
     # Expect a menu item
     total_spent : float = 0.0
+    cal_count = 0
     item : MenuItem
     for item in user_cart:
         # Apply the discount to each item
-        global cal_count
         # Get the price from the item, it could be different due to a discount.
         total_spent += item.getPrice()
         cal_count += item.calories
@@ -137,6 +143,14 @@ def OrderSummary():
 
     print("-" * 30)
     print(f"Subtotal after discount: ${total_spent:.2f}")
+
+    discount_multiplier = getDiscountPerc()  
+    discounted_total = total_spent * discount_multiplier
+
+    if discount_multiplier < 1:
+        print(f"Discount applied: ${total_spent - discounted_total:.2f}")
+        print(f"Subtotal after discount: ${discounted_total:.2f}")
+        total_spent = discounted_total
 
     # Ask for tip amount
     tip_percent = int( input("Enter tip percentage (0-20%): ") )
@@ -150,9 +164,13 @@ def OrderSummary():
     # Convert to float
     tip_percent /= 100
 
-    total_spent *= getDiscountPerc()
     # Calculate the tip
     final_price = calculateTip(total_spent, tip_percent)
+
+    #check for insufficient funds
+    if final_price > balance:
+        print("Insufficient funds! Order cancelled.")
+        return  
 
     # **Deduct the final price from balance**
     balance -= final_price
@@ -160,6 +178,10 @@ def OrderSummary():
     print(f'Remaining Balance {balance}')
     print("Payment is successful!")
     print(f"Total Calories: {cal_count}")
+
+     # Track purchases and clear cart
+    TrackPurchases(user_cart)  
+    user_cart.clear() 
 
 # Function to display the menu with a prompt for a suggestion
 # question: What question will be displayed from this
@@ -183,8 +205,7 @@ def displayMenuWithSelection( question : str, options: tuple ) -> str:
             if type(option) == MenuItem:
                 print(f"{idx+1}. {option.food:<6} -  Price: ${option.price:.2f}")
             # Only print this if you have things in your cart
-            elif option == "Checkout":
-                if user_cart:
+            elif option == "Checkout" or option == "Exit":
                     print( f"{idx+1}. {option}" )
         print("-" * 30)
 
@@ -247,6 +268,10 @@ if __name__ == "__main__":
         # If the user wants to checkout, you  
         if selection == "Checkout":
             OrderSummary()
+        elif selection == "Exit": 
+            print(f"Thank you for using the Online Ordering System, {name}!")
+            print(f"Your remaining balance is: ${balance:.2f}")
+            break
         else:
             if addItemToOrder( selection, user_allergy_list ):
                 print( f"You have selected: {selection.food} Adding to cart." )
